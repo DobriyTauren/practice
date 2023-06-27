@@ -10,6 +10,18 @@
 <div>
     <a class="btn btn-primary" asp-page-handler="YesterdayRefreshClick">Вчера</a>
     <a class="btn btn-primary" asp-page-handler="TodayRefreshClick">Сегодня</a>
+    @{
+        if (Data.Rates.Count == 0)
+        {
+            <a class="btn btn-success disabled">Скачать Excel</a>
+        }
+        else
+        {
+            <a class="btn btn-success" asp-page-handler="DownloadExcelClick">Скачать Excel</a>
+        }
+    }
+
+    
 </div>
 
 <div>
