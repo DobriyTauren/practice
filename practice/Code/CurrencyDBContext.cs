@@ -14,7 +14,7 @@ namespace practice
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=CurrencyDB;Username=postgres;Password=789654123");
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=789654123");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

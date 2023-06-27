@@ -35,7 +35,12 @@ namespace practice.Pages
 
         public void CheckRates(DateTime date)
         {
-            bool isRewriteNeeded = _dbContext.Actual.AsNoTracking().FirstOrDefault(e => e.Date.Date != date.Date) != null;
+            bool isRewriteNeeded = false;
+
+            if (date == DateTime.Today)
+            {
+                isRewriteNeeded = _dbContext.Actual.AsNoTracking().FirstOrDefault(e => e.Date.Date != date.Date) != null;
+            }
             
             Data.Rates = JsonConvert.DeserializeObject<List<Actual>>(RequestSender.GetRatesByDate(date));
 
