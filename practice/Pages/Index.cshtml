@@ -1,0 +1,40 @@
+﻿@page
+@model IndexModel
+
+@using Newtonsoft.Json
+
+@{
+    ViewData["Title"] = "Домашняя страница";
+}
+
+<div>
+    <a class="btn btn-primary" asp-page-handler="YesterdayRefreshClick">Вчера</a>
+    <a class="btn btn-primary" asp-page-handler="TodayRefreshClick">Сегодня</a>
+</div>
+
+<div>
+    @{
+        <table class="table">
+            <tr>
+                <th scope="col">Айди</th>
+                <th scope="col">Дата</th>
+                <th scope="col">Аббревиатура</th>
+                <th scope="col">Количество</th>
+                <th scope="col">Наименование</th>
+                <th scope="col">Курс</th>
+            </tr>
+
+            @foreach (var rate in Data.Rates)
+            {
+                <tr>
+                    <td>@rate.CurrencyId</td>
+                    <td>@rate.Date.ToShortDateString()</td>
+                    <td>@rate.CurrencyAbbreviation</td>
+                    <td>@rate.CurrencyScale</td>
+                    <td>@rate.CurrencyName</td>
+                    <td>@rate.CurrencyOfficialRate</td>
+                </tr>
+            }
+        </table>
+    }
+</div>
