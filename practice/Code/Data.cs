@@ -2,6 +2,8 @@
 {
     public class Data
     {
+        public static DateTime LastCheckDate { get; set; }
+
         public static List<Actual> Rates
         {
             get => _rates;

@@ -38,6 +38,7 @@ namespace practice.Pages
 
         public void CheckRates(DateTime date)
         {
+            Data.LastCheckDate = date;
             bool isRewriteNeeded = false;
 
             if (date == DateTime.Today)
@@ -85,7 +86,7 @@ namespace practice.Pages
             var excelPackage = new OfficeOpenXml.ExcelPackage();
 
             // Добавление данных в Excel файл
-            var worksheet = excelPackage.Workbook.Worksheets.Add("Sheet1");
+            var worksheet = excelPackage.Workbook.Worksheets.Add("Лист 1");
 
             worksheet.Cells[1, 1].Value = "Айди валюты";
             worksheet.Cells[1, 2].Value = "Дата";
@@ -100,7 +101,7 @@ namespace practice.Pages
                 int row = i + 2; // Смещение на 1 строку для учета заголовков
 
                 worksheet.Cells[row, 1].Value = Data.Rates[i].CurrencyId;
-                worksheet.Cells[row, 2].Value = Data.Rates[i].Date;
+                worksheet.Cells[row, 2].Value = Data.Rates[i].Date.ToShortDateString();
                 worksheet.Cells[row, 3].Value = Data.Rates[i].CurrencyAbbreviation;
                 worksheet.Cells[row, 4].Value = Data.Rates[i].CurrencyScale;
                 worksheet.Cells[row, 5].Value = Data.Rates[i].CurrencyName;
@@ -114,7 +115,7 @@ namespace practice.Pages
             var stream = new MemoryStream(excelPackage.GetAsByteArray());
 
             // Возвращение файла Excel
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Курсы валют на {DateTime.Today.ToShortDateString}.xlsx");
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Курсы валют на {Data.LastCheckDate.ToShortDateString()}.xlsx");
         }
 
         public async Task<IActionResult> OnGetYesterdayRefreshClick()
