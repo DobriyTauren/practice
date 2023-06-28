@@ -1,3 +1,6 @@
+using practice;
+using practice.Pages;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,4 +25,15 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
+//Data.LoadHistory(new DateTime(2023, 06, 23), DateTime.Today);
+
+Thread checkThread = new Thread(() =>
+{
+    Data.CheckRates(DateTime.Today);
+
+    Thread.Sleep(new TimeSpan(12, 0, 0));
+});
+checkThread.Start();
+
+Thread.Sleep(1500);
 app.Run();
