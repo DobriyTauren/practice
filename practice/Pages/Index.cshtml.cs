@@ -10,11 +10,23 @@ namespace practice.Pages
 {
     public class IndexModel : PageModel
     {
+        [BindProperty]
+        public string SearchText { get; set; }
+        
         private readonly ILogger<IndexModel> _logger;
 
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
+        }
+
+        public void OnPost(string searchText)
+        {
+            searchText = searchText.ToLower();
+
+            var rates = Data.DBContext.Actual.Where(a => a.CurrencyName.ToLower().Contains(searchText) || a.CurrencyAbbreviation.ToLower().Contains(searchText)).ToList();
+
+            Data.Rates = rates;
         }
 
         public void LoadTestData()

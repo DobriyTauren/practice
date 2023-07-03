@@ -7,21 +7,29 @@
     ViewData["Title"] = "Домашняя страница";
 }
 
-<div>
-    <a class="btn btn-primary" asp-page-handler="YesterdayRefreshClick">Вчера</a>
-    <a class="btn btn-primary" asp-page-handler="TodayRefreshClick">Сегодня</a>
-    @{
-        if (Data.Rates.Count == 0)
-        {
-            <a class="btn btn-success disabled">Скачать Excel</a>
-        }
-        else
-        {
-            <a class="btn btn-success" asp-page-handler="DownloadExcelClick">Скачать Excel</a>
-        }
-    }
+<div class="container d-flex justify-content-end" id="btn-container">
+    <div class="col">
+        <a class="btn btn-primary" asp-page-handler="YesterdayRefreshClick">Вчера</a>
+        <a class="btn btn-primary" asp-page-handler="TodayRefreshClick">Сегодня</a>
 
-    
+        @{
+            if (Data.Rates.Count == 0)
+            {
+                <a class="btn btn-success disabled">Скачать Excel</a>
+            }
+            else
+            {
+                <a class="btn btn-success" asp-page-handler="DownloadExcelClick">Скачать Excel</a>
+            }
+        }
+    </div>
+
+    <form method="post" style="width:30vw">
+        <div class="col-5 d-flex justify-content-end" style="float:right; width:100%;">
+            <input asp-for="SearchText" type="text" class="form-control" id="inputField" name="SearchText" required placeholder="Введите текст">
+            <button type="submit" style="margin-left: 5px" class="btn btn-primary">Поиск</button>
+        </div>
+    </form>
 </div>
 
 <div>

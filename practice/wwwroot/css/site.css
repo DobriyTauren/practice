@@ -20,3 +20,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+#btn-container {
+    max-height: 45px;
+}
