@@ -7,7 +7,56 @@
     ViewData["Title"] = "Домашняя страница";
 }
 
-<div class="container d-flex justify-content-end" id="btn-container">
+<div id="chartContainer"></div>
+
+@section Scripts {
+
+    <script>
+        var chartData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ChartArray));
+
+        document.addEventListener("DOMContentLoaded", function () {
+            Highcharts.chart('chartContainer', {
+                chart: {
+                    type: 'spline'
+                },
+                title: {
+                    text: '@Model.Name'
+                },
+                xAxis: {
+                    categories: chartData.map(function (data) {
+                        return data.Name;
+                    }),
+                },
+                yAxis: {
+                    title: {
+                        text: ' '
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Курс',
+                    data: chartData.map(function (data) {
+                        return data.Value;
+                    })
+                }]
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var rows = document.getElementsByClassName("clickable-row");
+            Array.from(rows).forEach(function (row) {
+                row.addEventListener("click", function () {
+                    var url = row.getAttribute("data-href");
+                    window.location.href = url;
+                });
+            });
+        });
+    </script>
+}
+
+<div class="container d-flex justify-content-end" style="margin-top: 10px;" id="btn-container">
     <div class="col">
         <a class="btn btn-primary" asp-page-handler="YesterdayRefreshClick">Вчера</a>
         <a class="btn btn-primary" asp-page-handler="TodayRefreshClick">Сегодня</a>
@@ -26,7 +75,7 @@
 
     <form method="post" style="width:30vw">
         <div class="col-5 d-flex justify-content-end" style="float:right; width:100%;">
-            <input asp-for="SearchText" type="text" class="form-control" id="inputField" name="SearchText" required placeholder="Введите текст">
+            <input asp-for="SearchText" type="text" class="form-control" id="inputField" name="SearchText" required placeholder="Введите валюту или её аббревиатуру">
             <button type="submit" style="margin-left: 5px" class="btn btn-primary">Поиск</button>
         </div>
     </form>
@@ -34,27 +83,28 @@
 
 <div>
     @{
-        <table class="table">
-            <tr>
-                <th scope="col">Айди</th>
-                <th scope="col">Дата</th>
-                <th scope="col">Аббревиатура</th>
-                <th scope="col">Количество</th>
-                <th scope="col">Наименование</th>
-                <th scope="col">Курс</th>
-            </tr>
-
-            @foreach (var rate in Data.Rates)
-            {
+        <table class="table table-hover">
+            <thead>
                 <tr>
-                    <td>@rate.CurrencyId</td>
-                    <td>@rate.Date.ToShortDateString()</td>
-                    <td>@rate.CurrencyAbbreviation</td>
-                    <td>@rate.CurrencyScale</td>
-                    <td>@rate.CurrencyName</td>
-                    <td>@rate.CurrencyOfficialRate</td>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Аббревиатура</th>
+                    <th scope="col">Количество</th>
+                    <th scope="col">Наименование</th>
+                    <th scope="col">Курс</th>
                 </tr>
-            }
+            </thead>
+            <tbody>
+                @foreach (var rate in Data.Rates)
+                {
+                    <tr class="clickable-row" data-href="@Url.Page("Index", new { id = rate.CurrencyId })">
+                        <td>@rate.Date.ToShortDateString()</td>
+                        <td>@rate.CurrencyAbbreviation</td>
+                        <td>@rate.CurrencyScale</td>
+                        <td>@rate.CurrencyName</td>
+                        <td>@rate.CurrencyOfficialRate</td>
+                    </tr>
+                }
+            </tbody>
         </table>
     }
 </div>

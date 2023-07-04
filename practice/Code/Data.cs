@@ -24,6 +24,7 @@ namespace practice
 
         private static List<Actual> _rates = new List<Actual>();
 
+
         public static void CheckRates(DateTime date)
         {
             LastCheckDate = date;
@@ -85,5 +86,26 @@ namespace practice
             DBContext.SaveChanges();
         }
 
+        public static ChartData[] GetChartRates(int? id, out string name)
+        {
+            List<History> history = DBContext.History.Where(h => h.CurrencyId == id).ToList();
+
+            name = DBContext.Actual.FirstOrDefault(a => a.CurrencyId == id).CurrencyName;
+
+            string scale = DBContext.Actual.FirstOrDefault(a => a.CurrencyId == id).CurrencyScale.ToString();
+
+            name = $"{scale} {name} к белорусским рублям";
+
+            ChartData[] chart = new ChartData[history.Count];
+
+            for (int i = 0; i < chart.Length; i++) 
+            {
+                chart[i] = new ChartData();
+                chart[i].Name = history[i].Date.ToLongDateString();
+                chart[i].Value = history[i].CurrencyOfficialRate;
+            }
+
+            return chart;
+        }
     }
 }

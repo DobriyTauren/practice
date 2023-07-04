@@ -10,14 +10,35 @@ namespace practice.Pages
 {
     public class IndexModel : PageModel
     {
+        
+        [BindProperty(SupportsGet = true)]
+        public int? Id { get; set; }
+
         [BindProperty]
         public string SearchText { get; set; }
-        
+
+        public string Name
+        {
+            get => _name;
+            set => _name = value;
+        }
+        private string _name = "";
+
+        public ChartData[] ChartArray { get; set; }
+
         private readonly ILogger<IndexModel> _logger;
 
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
+        }
+
+        public void OnGet()
+        {
+            if (Id != null)
+            {
+                ChartArray = Data.GetChartRates(Id, out _name);
+            }
         }
 
         public void OnPost(string searchText)
@@ -29,24 +50,20 @@ namespace practice.Pages
             Data.Rates = rates;
         }
 
-        public void LoadTestData()
-        {
-            var rates = JsonConvert.DeserializeObject<List<Actual>>(RequestSender.GetRatesByDate(new DateTime(2023, 06, 23)));
-
-            var oldRates = Data.DBContext.Actual.ToList();
-            Data.DBContext.Actual.RemoveRange(oldRates);
-
-            Data.DBContext.Actual.AddRange(rates);
-            Data.DBContext.SaveChanges();
-        }
-
         public async Task<IActionResult> OnGetTodayRefreshClick()
         {
             Data.CheckRates(DateTime.Today);
 
             return RedirectToPage();
-        } 
-        
+        }
+
+        public async Task<IActionResult> OnGetYesterdayRefreshClick()
+        {
+            Data.CheckRates(DateTime.Today.AddDays(-1));
+
+            return RedirectToPage();
+        }
+
         public async Task<FileResult> OnGetDownloadExcelClick()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -87,13 +104,6 @@ namespace practice.Pages
 
             // Возвращение файла Excel
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Курсы валют на {Data.LastCheckDate.ToShortDateString()}.xlsx");
-        }
-
-        public async Task<IActionResult> OnGetYesterdayRefreshClick()
-        {
-            Data.CheckRates(DateTime.Today.AddDays(-1));
-
-            return RedirectToPage();
         }
     }
 }
