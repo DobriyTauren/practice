@@ -89,6 +89,7 @@ namespace practice
         public static ChartData[] GetChartRates(int? id, out string name)
         {
             List<History> history = DBContext.History.Where(h => h.CurrencyId == id).ToList();
+            Actual actual = DBContext.Actual.FirstOrDefault(a => a.CurrencyId == id);
 
             name = DBContext.Actual.FirstOrDefault(a => a.CurrencyId == id).CurrencyName;
 
@@ -96,13 +97,24 @@ namespace practice
 
             name = $"{scale} {name} к белорусским рублям";
 
-            ChartData[] chart = new ChartData[history.Count];
+            ChartData[] chart = new ChartData[history.Count + 1];
 
-            for (int i = 0; i < chart.Length; i++) 
+            for (int i = 0; i < chart.Length - 1; i++) 
             {
                 chart[i] = new ChartData();
                 chart[i].Name = history[i].Date.ToLongDateString();
                 chart[i].Value = history[i].CurrencyOfficialRate;
+            }
+
+            int lastElem = chart.Length - 1;
+
+            chart[lastElem] = new ChartData();
+            chart[lastElem].Name = actual.Date.ToLongDateString();
+            chart[lastElem].Value = actual.CurrencyOfficialRate;
+
+            for (int i = 0; i < chart.Length; i++)
+            {
+                chart[i].Name = chart[i].Name.Replace("г.", "");
             }
 
             return chart;
